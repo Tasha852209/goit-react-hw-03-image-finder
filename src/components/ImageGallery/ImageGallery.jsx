@@ -1,5 +1,5 @@
 import React from 'react';
-import css from './ImageGallery. module.css';
+import css from './ImageGallery.module.css';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 
 export const ImageGallery = ({ galleryItems }) => {

@@ -5,11 +5,9 @@ import { Searchbar } from 'components/Searchbar/Searchbar';
 import { ImageGallery } from 'components/ImageGallery/ImageGallery';
 import { Loader } from 'components/Loader/Loader';
 import { Button } from 'components/Button/Button';
+import { fetchImages } from 'services/fetchImages';
 
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { PostsApiService } from 'services/PostsApiService';
-
-const postApiService = new PostsApiService();
+// import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 export class App extends Component {
   state = {
@@ -38,56 +36,79 @@ export class App extends Component {
     }
   }
 
-  fetchGalleryItems = (nextQuery, nextPage) => {
-    this.setState({ loading: true, error: false });
-
-    postApiService.query = nextQuery;
-    postApiService.page = nextPage;
-
-    postApiService.fetchPost().then(data => {
-      postApiService.hits = data.totalHits;
-
-      const newData = data.hits.map(
-        ({ id, tags, webformatURL, largeImageURL }) => ({
-          id,
-          tags,
-          webformatURL,
-          largeImageURL,
-        })
-      );
-      const currentData = [...this.state.galleryItems, ...newData];
+  fetchGalleryItems = async (searchQuery, galleryPage) => {
+    this.setState({ loading: true });
+    try {
+      const images = await fetchImages(searchQuery, galleryPage);
+      const { totalHits } = images;
 
       this.setState(prevState => ({
-        galleryItems: [...prevState.galleryItems, ...newData],
+        galleryItems: [...prevState.galleryItems, ...images.hits],
+        totalHits,
+        isButtonShow:
+          prevState.galleryItems.length + images.hits.length >= totalHits,
       }));
 
-      if (!data.totalHits) {
-        this.setState({ loading: false, error: true });
-        return Notify.warning(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
+      if (this.state.galleryItems === totalHits) {
+        this.setState({ isButtonShow: true });
       }
-
-      if (currentData.length >= data.totalHits) {
-        this.setState({
-          loading: false,
-          isButtonShow: false,
-          error: false,
-        });
-        return;
-      }
-
-      if (nextPage === 1) {
-        Notify.success(`Hooray! We found ${postApiService.hits} images.`);
-      }
-
-      this.setState({
-        loading: false,
-        isButtonShow: true,
-        error: false,
-      });
-    });
+    } catch (error) {
+      this.setState({ error });
+    } finally {
+      this.setState({ loading: false });
+    }
   };
+
+  // fetchGalleryItems = (nextQuery, nextPage) => {
+  //   this.setState({ loading: true, error: false });
+
+  //   postApiService.query = nextQuery;
+  //   postApiService.page = nextPage;
+
+  //   postApiService.fetchPost().then(data => {
+  //     postApiService.hits = data.totalHits;
+
+  //     const newData = data.hits.map(
+  //       ({ id, tags, webformatURL, largeImageURL }) => ({
+  //         id,
+  //         tags,
+  //         webformatURL,
+  //         largeImageURL,
+  //       })
+  //     );
+  //     const currentData = [...this.state.galleryItems, ...newData];
+
+  //     this.setState(prevState => ({
+  //       galleryItems: [...prevState.galleryItems, ...newData],
+  //     }));
+
+  //     if (!data.totalHits) {
+  //       this.setState({ loading: false, error: true });
+  //       return Notify.warning(
+  //         'Sorry, there are no images matching your search query. Please try again.'
+  //       );
+  //     }
+
+  //     if (currentData.length >= data.totalHits) {
+  //       this.setState({
+  //         loading: false,
+  //         isButtonShow: false,
+  //         error: false,
+  //       });
+  //       return;
+  //     }
+
+  //     if (nextPage === 1) {
+  //       Notify.success(`Hooray! We found ${postApiService.hits} images.`);
+  //     }
+
+  //     this.setState({
+  //       loading: false,
+  //       isButtonShow: true,
+  //       error: false,
+  //     });
+  //   });
+  // };
 
   handleFormSubmit = searchQuery => {
     this.setState({ searchQuery });
