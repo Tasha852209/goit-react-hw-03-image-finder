@@ -1,14 +1,9 @@
 import React from 'react';
 import css from './Button.module.css';
 
-export const Button = ({ onClick, disabled }) => {
+export const Button = ({ onClick }) => {
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      type="button"
-      className={css.button}
-    >
+    <button onClick={onClick} className={css.button}>
       Load more
     </button>
   );
