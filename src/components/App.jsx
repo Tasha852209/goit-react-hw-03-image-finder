@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Modal from './Modal/Modal';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
-import { fetchImgs } from '../services/api';
+import { fetchImages } from '../services/api';
 
 import Button from './Button/Button';
 import { Loader } from './Loader/Loader';
@@ -18,7 +18,7 @@ const AppContainer = styled.div`
 export class App extends Component {
   state = {
     images: [],
-    showModale: false,
+    showModal: false,
     isLoading: false,
     searchItem: '',
     error: null,
@@ -46,9 +46,9 @@ export class App extends Component {
   };
 
   async loadImages(searchItem, page) {
-    this.setState({ isLoading: true, showModale: false });
+    this.setState({ isLoading: true, showModal: false });
     try {
-      const images = await fetchImgs(searchItem, page);
+      const images = await fetchImages(searchItem, page);
       const { totalHits } = images;
 
       this.setState(prevState => ({
@@ -78,7 +78,7 @@ export class App extends Component {
 
   toggleModal = () => {
     this.setState(prevState => ({
-      showModale: !prevState.showModale,
+      showModal: !prevState.showModal,
     }));
   };
 
@@ -99,7 +99,7 @@ export class App extends Component {
       isLoading,
       error,
       allImagesLoaded,
-      showModale,
+      showModal,
       selectedImage,
     } = this.state;
 
@@ -119,7 +119,7 @@ export class App extends Component {
             isLoading={isLoading}
           />
         )}
-        {showModale && (
+        {showModal && (
           <Modal onClick={this.handleBackdropClick}>
             {selectedImage && (
               <img src={selectedImage.largeImageURL} alt={selectedImage.tags} />
