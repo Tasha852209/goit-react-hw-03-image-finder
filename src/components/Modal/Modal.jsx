@@ -13,13 +13,13 @@ class Modal extends Component {
 
   handleKeyDown = event => {
     if (event.code === 'Escape') {
-      this.props.onClick();
+      this.props.toggleModal(); // Call the toggleModal method to close the modal
     }
   };
 
   handleBackdropClick = event => {
     if (event.target === event.currentTarget) {
-      this.toggleModal();
+      this.props.toggleModal();
     }
   };
   render() {

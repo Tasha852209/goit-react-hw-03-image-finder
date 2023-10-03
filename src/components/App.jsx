@@ -119,7 +119,10 @@ export class App extends Component {
           />
         )}
         {showModal && (
-          <Modal onClick={this.handleBackdropClick}>
+          <Modal
+            toggleModal={this.toggleModal}
+            onClick={this.handleBackdropClick}
+          >
             {selectedImage && (
               <img src={selectedImage.largeImageURL} alt={selectedImage.tags} />
             )}
