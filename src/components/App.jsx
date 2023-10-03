@@ -111,10 +111,9 @@ export class App extends Component {
           <ImageGallery images={images} onImageClick={this.showSelectedImage} />
         )}
         {isLoading && <Loader />}
-        {images.length > 0 && (
+        {!allImagesLoaded && images.length > 0 && (
           <Button
             text="Load more"
-            disabled={allImagesLoaded}
             clickHandle={this.showMoreImages}
             isLoading={isLoading}
           />
